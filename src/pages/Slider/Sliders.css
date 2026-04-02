@@ -1,0 +1,153 @@
+.banners-page {
+  padding: 24px;
+  flex: 1;
+  overflow: auto;
+}
+
+.page-header {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  border-radius: 6px;
+  background: var(--bg-input);
+  padding: 4px;
+  width: fit-content;
+}
+
+.tab {
+  border: none;
+  outline: none;
+  padding: 8px 16px;
+  background: transparent;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  background: var(--bg-nav-item-hover);
+}
+
+.tab.active {
+  background: var(--bg-card);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  color: var(--primary-color);
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.card-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.card-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.banners-list {
+  padding: 16px;
+}
+
+.banner-item-row {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  gap: 16px;
+  background: var(--bg-card);
+}
+
+.banner-row-image {
+  flex-shrink: 0;
+}
+
+.banner-row-image img {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.banner-row-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.banner-row-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.label {
+  font-weight: 500;
+  color: var(--text-muted);
+  min-width: 80px;
+}
+
+.value {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.banner-row-actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn,
+.delete-btn {
+  min-width: auto;
+  padding: 6px 12px;
+}
+
+@media (max-width: 768px) {
+  .banner-item-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .banner-row-actions {
+    margin-top: 12px;
+    justify-content: flex-end;
+  }
+}

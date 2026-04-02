@@ -1,0 +1,452 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 32px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.logo-full {
+  height: 48px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.brand-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.brand-subtitle {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+  min-height: 0;
+  /* Crucial for nested flex scrolling */
+  padding-right: 4px;
+  /* Avoid scrollbar overlapping content */
+}
+
+/* Custom Scrollbar for Sidebar Nav */
+.sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-muted);
+}
+
+.sidebar-group-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  position: relative;
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+
+/* Dropdown Support */
+.nav-label-flex {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chevron {
+  color: var(--text-muted);
+  transition: transform 0.3s ease;
+}
+
+.chevron.expanded {
+  transform: rotate(180deg);
+}
+
+.sub-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+  max-height: 0;
+  padding-left: 20px;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sub-menu.open {
+  max-height: 300px;
+  /* Increased to accommodate more children if needed */
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.nav-item.sub-item {
+  padding: 8px 14px;
+  font-size: 13px;
+  gap: 8px;
+}
+
+.nav-line {
+  width: 2px;
+  height: 2px;
+  background: var(--border-color);
+  border-radius: 99px;
+  transition: all 0.2s;
+}
+
+.nav-item.active .nav-line {
+  background: var(--primary-color);
+  width: 6px;
+  height: 6px;
+}
+
+.nav-item:hover {
+  background: var(--bg-nav-item-hover);
+  color: var(--text-primary);
+}
+
+.nav-item:hover .nav-icon {
+  color: var(--primary-color);
+}
+
+/* Sub-item Hover & Active States */
+.nav-item.sub-item:hover {
+  background: rgba(15, 118, 110, 0.05);
+}
+
+.nav-item.sub-item:hover .nav-line {
+  background: var(--text-muted);
+  transform: scale(1.5);
+}
+
+.nav-item.sub-item.active {
+  background: rgba(15, 118, 110, 0.08);
+  color: var(--primary-color);
+}
+
+.nav-item.sub-item.active .nav-line {
+  background: var(--primary-color);
+  width: 6px;
+  height: 6px;
+  transform: scale(1.2);
+}
+
+/* Ensure sub-items don't get the same side-bar indicator as parent items */
+.nav-item.sub-item.active::before {
+  display: none;
+}
+
+.nav-item.active {
+  background: rgba(15, 118, 110, 0.1);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: var(--primary-color);
+  border-radius: 0 4px 4px 0;
+}
+
+.nav-item.active .nav-icon {
+  color: var(--primary-color);
+}
+
+.nav-item.active .chevron {
+  color: var(--primary-color);
+}
+
+.nav-item.active-parent {
+  color: var(--primary-color);
+  font-weight: 600;
+  background: rgba(15, 118, 110, 0.04);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.preference-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.preference-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--bg-input);
+  transition: all 0.2s ease;
+}
+
+.pref-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.switch {
+  position: relative;
+  display: inline-flex;
+  width: 38px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border-color);
+  border-radius: 999px;
+  transition: 0.3s;
+}
+
+.switch-slider::before {
+  position: absolute;
+  content: '';
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: var(--bg-card);
+  border-radius: 999px;
+  transition: 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.switch input:checked+.switch-slider {
+  background-color: var(--primary-color);
+}
+
+.switch input:checked+.switch-slider::before {
+  transform: translateX(18px);
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--bg-input);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.user-profile:hover {
+  border-color: var(--border-color);
+  background: var(--bg-nav-item-hover);
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary-color), #2dd4bf);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-role {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Dark Mode Overrides */
+[data-theme='dark'] .preference-item,
+[data-theme='dark'] .user-profile {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-color: var(--border-color);
+}
+
+[data-theme='dark'] .user-profile:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle-btn {
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.sidebar-toggle-btn:hover {
+  opacity: 1;
+  background: var(--hover-bg);
+}
+
+/* Collapsed Sidebar Styles */
+.sidebar.collapsed {
+  padding: 24px 12px;
+}
+
+.sidebar.collapsed .sidebar-header {
+  justify-content: center;
+  position: relative;
+}
+
+.sidebar.collapsed .logo-full {
+  display: none;
+}
+
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: 10px;
+}
+
+.sidebar.collapsed .nav-icon {
+  margin: 0;
+}
+
+.sidebar.collapsed .nav-label-flex,
+.sidebar.collapsed .nav-group-label,
+.sidebar.collapsed .sidebar-group-label {
+  display: none;
+}
+
+.sidebar.collapsed .sub-menu {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px;
+  min-width: 180px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: none;
+  z-index: 100;
+}
+
+.sidebar.collapsed .nav-group-wrapper:hover > .sub-menu {
+  display: flex;
+}
+
+.sidebar.collapsed .sidebar-footer {
+  padding-top: 12px;
+}
+
+.sidebar.collapsed .user-profile {
+  justify-content: center;
+  padding: 8px;
+}
+
+.sidebar.collapsed .user-details {
+  display: none;
+}
+
+.sidebar.collapsed .preference-item {
+  justify-content: center;
+  padding: 8px;
+}
+
+.sidebar.collapsed .pref-label {
+  display: none;
+}
+
+/* Hidden Sidebar Styles */
+.sidebar.hidden {
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
+}

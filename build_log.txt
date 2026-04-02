@@ -1,0 +1,46 @@
+﻿Program 'node.exe' failed 
+to run: Access is deniedAt 
+C:\Program 
+Files\nodejs\npx.ps1:13 
+char:14
++ $NPM_PREFIX=(& $NODE_EXE 
+$NPM_PREFIX_JS)
++              
+~~~~~~~~~~~~~~~~~~~~~~~~~~.
+At C:\Program 
+Files\nodejs\npx.ps1:13 
+char:1
++ $NPM_PREFIX=(& $NODE_EXE 
+$NPM_PREFIX_JS)
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
+    + CategoryInfo          
+    : ResourceUnavailable:  
+   (:) [], ApplicationFai   
+ ledException
+    + FullyQualifiedErrorId 
+    : NativeCommandFailed
+ 
+Program 'node.exe' failed 
+to run: Access is deniedAt 
+C:\Program 
+Files\nodejs\npx.ps1:29 
+char:3
++   & $NODE_EXE $NPX_CLI_JS 
+$args
++   ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~.
+At C:\Program 
+Files\nodejs\npx.ps1:29 
+char:3
++   & $NODE_EXE $NPX_CLI_JS 
+$args
++   ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo          
+    : ResourceUnavailable:  
+   (:) [], ApplicationFai   
+ ledException
+    + FullyQualifiedErrorId 
+    : NativeCommandFailed
+ 
