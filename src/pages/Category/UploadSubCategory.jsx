@@ -18,7 +18,7 @@ function UploadSubCategory({ refreshSubCategories, showNotification, setProgress
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/api/categories");
+        const res = await axios.get("https://martico-server.vercel.app/api/categories");
         if (res.data.success) {
           setCategories(res.data.data);
         }
@@ -78,7 +78,7 @@ function UploadSubCategory({ refreshSubCategories, showNotification, setProgress
 
       console.log("Sending Data:", payload);
 
-      await axios.post("http://localhost:4000/api/subcategories/create", payload);
+      await axios.post("https://martico-server.vercel.app/api/subcategories/create", payload);
 
       // Refresh the list and redirect
       if (showNotification) showNotification("Sub Category uploaded successfully!", "success");

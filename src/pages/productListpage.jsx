@@ -48,7 +48,7 @@ const ProductList = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/api/categories");
+        const res = await axios.get("https://martico-server.vercel.app/api/categories");
         if (res.data.success) {
           setCategories(res.data.data);
         }
@@ -79,7 +79,7 @@ const ProductList = () => {
     
     try {
       setProgress(60);
-      const response = await axios.get(`http://localhost:4000/api/products`, {
+      const response = await axios.get(`https://martico-server.vercel.app/api/products`, {
         params: {
           page: page,
           limit: itemsPerPage,

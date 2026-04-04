@@ -56,7 +56,7 @@ function Banners() {
       setLoading(true);
     }
     try {
-      const res = await axios.get("http://localhost:4000/api/banners");
+      const res = await axios.get("https://martico-server.vercel.app/api/banners");
       if (res.data?.success) {
         setBanners(res.data.data || []);
       } else {
@@ -103,7 +103,7 @@ function Banners() {
     setLoading(true);
     setProgress(30);
     try {
-      const res = await axios.delete(`http://localhost:4000/api/banners/${bannerId}`);
+      const res = await axios.delete(`https://martico-server.vercel.app/api/banners/${bannerId}`);
       showSnackbar(res.data?.message || "Banner deleted successfully!", "success");
       await fetchBanners({ showLoader: false });
     } catch (error) {
@@ -123,7 +123,7 @@ function Banners() {
     setLoading(true);
     setProgress(30);
     try {
-      const res = await axios.put(`http://localhost:4000/api/banners/${bannerId}`, {
+      const res = await axios.put(`https://martico-server.vercel.app/api/banners/${bannerId}`, {
         image: updatedBanner.image
       });
       showSnackbar(res.data?.message || "Banner updated successfully!", "success");

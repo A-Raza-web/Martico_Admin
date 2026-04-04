@@ -15,7 +15,7 @@ function ProductDeleteDialog({ open, onClose, onConfirm, productName, productId 
         setError('');
         
         try {
-            const response = await axios.delete(`http://localhost:4000/api/products/${productId}`);
+            const response = await axios.delete(`https://martico-server.vercel.app/api/products/${productId}`);
             
             if (response.data.success) {
                 // Call onConfirm callback to handle success

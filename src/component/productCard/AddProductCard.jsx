@@ -56,7 +56,7 @@ function AddProductCard({ onCancel, onSubmit, initialData }) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/api/categories")
+        const res = await axios.get("https://martico-server.vercel.app/api/categories")
         if (res.data.success) {
           setCategories(res.data.data)
         }
@@ -70,7 +70,7 @@ function AddProductCard({ onCancel, onSubmit, initialData }) {
   useEffect(() => {
     const fetchSubCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/api/subcategories")
+        const res = await axios.get("https://martico-server.vercel.app/api/subcategories")
         if (res.data.success) {
           setSubCategories(res.data.data)
         }

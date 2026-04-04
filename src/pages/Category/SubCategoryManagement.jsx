@@ -46,7 +46,7 @@ function SubCategoryManagement() {
   const fetchSubCategories = async () => {
     setProgress(30);
     try {
-      const res = await axios.get("http://localhost:4000/api/subcategories");
+      const res = await axios.get("https://martico-server.vercel.app/api/subcategories");
       if (res.data.success) {
         setSubCategories(res.data.data);
       }
@@ -60,7 +60,7 @@ function SubCategoryManagement() {
   // Fetch Categories for reference
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:4000/api/categories");
+      const res = await axios.get("https://martico-server.vercel.app/api/categories");
       if (res.data.success) {
         setCategories(res.data.data);
       }
@@ -88,7 +88,7 @@ function SubCategoryManagement() {
     setLoading(true);
     setProgress(30);
     try {
-      const res = await axios.delete(`http://localhost:4000/api/subcategories/${subCategoryId}`);
+      const res = await axios.delete(`https://martico-server.vercel.app/api/subcategories/${subCategoryId}`);
       if (res.data.success) {
         showSnackbar("Sub Category deleted successfully!", "success");
         fetchSubCategories(); // Refresh the list

@@ -95,7 +95,7 @@ function UploadCategory({ refreshCategories, showNotification, setProgress, setP
 
       console.log("Sending Data:", payload);
 
-      await axios.post("http://localhost:4000/api/categories/create", payload);
+      await axios.post("https://martico-server.vercel.app/api/categories/create", payload);
 
       // Refresh the list and redirect
       if (showNotification) showNotification("Category uploaded successfully!", "success");

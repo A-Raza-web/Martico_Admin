@@ -51,7 +51,7 @@ function CategoryManagement() {
   const fetchCategories = async () => {
     setProgress(30);
     try {
-      const res = await axios.get("http://localhost:4000/api/categories");
+      const res = await axios.get("https://martico-server.vercel.app/api/categories");
       if (res.data.success) {
         setCategories(res.data.data);
       }
@@ -100,7 +100,7 @@ function CategoryManagement() {
     setLoading(true);
     setProgress(30);
     try {
-      await axios.delete(`http://localhost:4000/api/categories/${categoryId}`);
+      await axios.delete(`https://martico-server.vercel.app/api/categories/${categoryId}`);
       showSnackbar("Category deleted successfully!", "error");
       fetchCategories(); // refresh list
     } catch (error) {
@@ -135,7 +135,7 @@ function CategoryManagement() {
       }
 
 
-      await axios.put(`http://localhost:4000/api/categories/${updatedCategory._id}`, payload);
+      await axios.put(`https://martico-server.vercel.app/api/categories/${updatedCategory._id}`, payload);
       showSnackbar("Category updated successfully!", "success");
       fetchCategories();
 

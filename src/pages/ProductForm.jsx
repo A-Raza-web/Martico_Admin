@@ -53,7 +53,7 @@ const ProductForm = () => {
                 setLoading(true)
                 try {
                     setProgress(60);
-                    const res = await axios.get(`http://localhost:4000/api/products/${id}`)
+                    const res = await axios.get(`https://martico-server.vercel.app/api/products/${id}`)
                     if (res.data.success) {
                         setInitialData(res.data.data)
                     }
@@ -112,8 +112,8 @@ const ProductForm = () => {
         }
 
         const url = isEdit
-            ? `http://localhost:4000/api/products/${id}`
-            : `http://localhost:4000/api/products/create`
+            ? `https://martico-server.vercel.app/api/products/${id}`
+            : `https://martico-server.vercel.app/api/products/create`
 
         const method = isEdit ? 'put' : 'post'
 

@@ -60,7 +60,7 @@ function UploadBanner({ showNotification, setProgress, setParentLoading }) {
       const base64Image = await convertToBase64(formData.image);
       if (setProgress) setProgress(60);
 
-      const res = await axios.post("http://localhost:4000/api/banners", {
+      const res = await axios.post("https://martico-server.vercel.app/api/banners", {
         image: base64Image
       });
 
