@@ -1,54 +1,184 @@
-import { Link } from 'react-router-dom'
-import Button from '@mui/material/Button'
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import CircularProgress from '@mui/material/CircularProgress';
+
+const API_BASE = import.meta.env.VITE_API_URL || 'https://martico-server.vercel.app/api';
+const getAdminToken = () =>
+  localStorage.getItem('adminToken') ||
+  localStorage.getItem('token') ||
+  sessionStorage.getItem('adminToken') ||
+  sessionStorage.getItem('token');
+
+const formatDate = (dateString) => {
+  if (!dateString) return '-';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
+const formatCurrency = (amount) => {
+  return `$${Number(amount || 0).toFixed(2)}`;
+};
+
+const getStatusClass = (status) => {
+  if (status === 'paid' || status === 'delivered' || status === 'confirmed') return 'status-success';
+  if (status === 'pending' || status === 'processing') return 'status-pending';
+  if (status === 'cancelled' || status === 'refunded' || status === 'failed') return 'status-failed';
+  return 'status-pending';
+};
+
+const getStatusLabel = (status) => {
+  const labels = {
+    pending: 'Pending',
+    confirmed: 'Confirmed',
+    shipped: 'Shipped',
+    delivered: 'Delivered',
+    cancelled: 'Cancelled',
+    paid: 'Paid',
+    unpaid: 'Unpaid',
+    refunded: 'Refunded',
+  };
+  return labels[status] || status;
+};
 
 const Orders = () => {
-    const orders = [
-        { id: '#1001', customer: 'Theo Lawrence', date: 'Nov 18, 2024', amount: '€ 650.00', status: 'Paid', items: 3 },
-        { id: '#1002', customer: 'Amy Merch', date: 'Nov 17, 2024', amount: '€ 250.00', status: 'Pending', items: 1 },
-        { id: '#1003', customer: 'Bank Transfer', date: 'Nov 16, 2024', amount: '€ 1,200.00', status: 'Failed', items: 5 },
-        { id: '#1004', customer: 'John Doe', date: 'Nov 15, 2024', amount: '€ 120.00', status: 'Paid', items: 2 },
-    ]
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
-    return (
-        <div className="card table-card">
-            <div className="card-header">
-                <div>
-                    <div className="card-title">Orders</div>
-                    <div className="card-subtitle">Manage customer orders</div>
-                </div>
-                <div className="table-actions">
-                    <Button size="small" variant="outlined" color="inherit">Filter</Button>
-                    <Button size="small" variant="outlined" color="inherit">Sort</Button>
-                </div>
-            </div>
-            <div className="table">
-                <div className="table-header" style={{ gridTemplateColumns: '1fr 2fr 1fr 1fr 1fr 1fr' }}>
-                    <span>Order ID</span>
-                    <span>Customer</span>
-                    <span>Date</span>
-                    <span>Items</span>
-                    <span>Amount</span>
-                    <span>Status</span>
-                </div>
-                {orders.map((order) => (
-                    <div key={order.id} className="table-row" style={{ gridTemplateColumns: '1fr 2fr 1fr 1fr 1fr 1fr', cursor: 'pointer', textDecoration: 'none', color: 'inherit' }}>
-                        <Link to={`/orders/${order.id.replace('#', '')}`} style={{ display: 'contents', color: 'inherit', textDecoration: 'none' }}>
-                            <span style={{ fontWeight: 500 }}>{order.id}</span>
-                            <span>{order.customer}</span>
-                            <span>{order.date}</span>
-                            <span>{order.items} items</span>
-                            <span>{order.amount}</span>
-                            <span className={`status ${order.status === 'Paid' ? 'status-success' :
-                                order.status === 'Pending' ? 'status-pending' : 'status-failed'
-                                }`}>
-                                {order.status}
-                            </span>
-                        </Link>
-                    </div>
-                ))}
-            </div>
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      const params = new URLSearchParams();
+      if (statusFilter) params.append('status', statusFilter);
+      if (searchQuery) params.append('q', searchQuery);
+
+      const token = getAdminToken();
+      const res = await fetch(`${API_BASE}/orders/admin/orders?${params.toString()}`, {
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          setOrders(json.data);
+        } else {
+          setError('Failed to fetch orders');
+        }
+      } else {
+        setError('Failed to fetch orders');
+      }
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+      setError('Failed to fetch orders');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  useEffect(() => {
+    const debounce = setTimeout(() => {
+      fetchOrders();
+    }, 300);
+    return () => clearTimeout(debounce);
+  }, [statusFilter, searchQuery]);
+
+  return (
+    <div className="card table-card">
+      <div className="card-header">
+        <div>
+          <div className="card-title">Orders</div>
+          <div className="card-subtitle">Manage customer orders</div>
         </div>
-    )
-}
+        <div className="table-actions" style={{ display: 'flex', gap: '10px' }}>
+          <TextField
+            size="small"
+            placeholder="Search orders..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{ width: 200 }}
+          />
+          <FormControl size="small" sx={{ minWidth: 140 }}>
+            <InputLabel>Status</InputLabel>
+            <Select
+              value={statusFilter}
+              label="Status"
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <MenuItem value="">All</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="confirmed">Confirmed</MenuItem>
+              <MenuItem value="shipped">Shipped</MenuItem>
+              <MenuItem value="delivered">Delivered</MenuItem>
+              <MenuItem value="cancelled">Cancelled</MenuItem>
+            </Select>
+          </FormControl>
+          <Button size="small" variant="outlined" color="inherit" onClick={fetchOrders}>
+            Refresh
+          </Button>
+        </div>
+      </div>
 
-export default Orders
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
+          <CircularProgress />
+        </div>
+      ) : error ? (
+        <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
+          {error}
+          <Button onClick={fetchOrders} sx={{ ml: 2 }}>Retry</Button>
+        </div>
+      ) : orders.length === 0 ? (
+        <div style={{ padding: '40px', textAlign: 'center' }}>
+          No orders found
+        </div>
+      ) : (
+        <div className="table">
+          <div className="table-header" style={{ gridTemplateColumns: '1fr 2fr 1fr 1fr 1fr 1fr' }}>
+            <span>Order ID</span>
+            <span>Customer</span>
+            <span>Date</span>
+            <span>Items</span>
+            <span>Amount</span>
+            <span>Status</span>
+          </div>
+          {orders.map((order) => (
+            <div
+              key={order._id}
+              className="table-row"
+              style={{ gridTemplateColumns: '1fr 2fr 1fr 1fr 1fr 1fr', cursor: 'pointer' }}
+              onClick={() => navigate(`/orders/${order._id}`)}
+            >
+              <span style={{ fontWeight: 500 }}>{order.orderNumber || order._id}</span>
+              <span>{order.contact?.email || order.shippingAddress?.fullName || '-'}</span>
+              <span>{formatDate(order.createdAt)}</span>
+              <span>{order.items?.length || 0} items</span>
+              <span>{formatCurrency(order.totalAmount)}</span>
+              <span className={`status ${getStatusClass(order.fulfillmentStatus)}`}>
+                {getStatusLabel(order.fulfillmentStatus)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Orders;

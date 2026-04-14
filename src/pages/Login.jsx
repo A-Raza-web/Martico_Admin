@@ -56,23 +56,30 @@ const Login = () => {
             const data = await response.json();
 
             if (data._id) {
-                // Store token and user info
+                const isAdmin = data.role === 'admin';
+                if (!isAdmin) {
+                    setError('Admin access required');
+                    setLoading(false);
+                    return;
+                }
                 const userData = {
                     _id: data._id,
                     name: data.name,
                     email: data.email,
-                    phone: data.phone
+                    phone: data.phone,
+                    role: data.role
                 }
                 console.log('Login: Storing user data:', userData)
                 
                 if (rememberMe) {
                     localStorage.setItem('token', data.token);
+                    localStorage.setItem('adminToken', data.token);
                     localStorage.setItem('user', JSON.stringify(userData));
                 } else {
                     sessionStorage.setItem('token', data.token);
+                    sessionStorage.setItem('adminToken', data.token);
                     sessionStorage.setItem('user', JSON.stringify(userData));
                 }
-                // Redirect to dashboard
                 navigate('/');
             } else {
                 setError(data.message || 'Invalid email or password');

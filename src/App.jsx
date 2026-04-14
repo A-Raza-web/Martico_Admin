@@ -53,20 +53,21 @@ function Topbar({ title }) {
 // Protected Route Component
 function ProtectedRoute({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
-  
+
   useEffect(() => {
-    // Check for token in localStorage or sessionStorage
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    // Check for token in localStorage or sessionStorage (including adminToken)
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token') ||
+                  localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
     setIsAuthenticated(!!token);
   }, []);
 
   if (isAuthenticated === null) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh' 
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh'
       }}>
         Loading...
       </div>

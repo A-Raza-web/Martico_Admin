@@ -137,8 +137,10 @@ function SideNavbar({ sidebarOpen, setSidebarOpen }) {
 
   const handleLogout = () => {
     localStorage.removeItem('token')
+    localStorage.removeItem('adminToken')
     localStorage.removeItem('user')
     sessionStorage.removeItem('token')
+    sessionStorage.removeItem('adminToken')
     sessionStorage.removeItem('user')
     navigate('/login')
   }
