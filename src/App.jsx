@@ -29,6 +29,7 @@ function Topbar({ title }) {
   return (
     <header className="topbar">
       <div className="topbar-left">
+        
         <h1>{title}</h1>
         <p>Overview of your ecommerce performance</p>
       </div>
@@ -37,6 +38,7 @@ function Topbar({ title }) {
           <span>18 jun 2026 - 18 feb 2026</span>
         </div>
         <Button className='export-btn' variant="text" color="inherit">Export</Button>
+        
         <Button
           component={Link}
           to="/products/new"
@@ -84,7 +86,8 @@ function ProtectedRoute({ children }) {
 function App() {
   const location = useLocation()
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup'
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarHovering, setSidebarHovering] = useState(false)
 
   const getPageTitle = (pathname) => {
     switch (pathname) {
@@ -127,8 +130,8 @@ function App() {
         </Routes>
       ) : (
         <ProtectedRoute>
-          <div className={`dashboard ${sidebarOpen ? '' : 'sidebar-hidden'}`}>
-            <SideNavbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+          <div className={`dashboard ${!sidebarOpen && !sidebarHovering ? 'sidebar-hidden' : ''}`}>
+            <SideNavbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} sidebarHovering={sidebarHovering} setSidebarHovering={setSidebarHovering} />
             <div className="main">
               <Topbar title={title} />
               <main className="content">

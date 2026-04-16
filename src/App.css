@@ -8,7 +8,7 @@
 }
 
 .dashboard.sidebar-hidden {
-  grid-template-columns: 0 minmax(0, 1fr);
+  grid-template-columns: 70px minmax(0, 1fr);
 }
 
 .dashboard.sidebar-hidden .main {

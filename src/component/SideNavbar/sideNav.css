@@ -9,6 +9,12 @@
   top: 0;
   overflow: hidden;
   transition: all 0.3s ease;
+  width: 260px;
+}
+
+.sidebar.collapsed {
+  width: 70px;
+  padding: 24px 12px;
 }
 
 .sidebar-header {
@@ -28,6 +34,11 @@
   object-fit: contain;
   display: block;
   margin: 0 auto;
+  transition: all 0.3s ease;
+}
+
+.sidebar.collapsed .logo-full {
+  height: 40px;
 }
 
 .brand-name {
@@ -375,32 +386,65 @@
   background: var(--hover-bg);
 }
 
+/* Sidebar Group Styling */
+.sidebar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 /* Collapsed Sidebar Styles */
 .sidebar.collapsed {
   padding: 24px 12px;
+  width: 70px;
 }
 
 .sidebar.collapsed .sidebar-header {
   justify-content: center;
   position: relative;
+  margin-bottom: 20px;
 }
 
 .sidebar.collapsed .logo-full {
+  height: 32px;
+  display: block;
+}
+
+.sidebar.collapsed .sidebar-nav {
+  gap: 12px;
+}
+
+.sidebar.collapsed .sidebar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar.collapsed .sidebar-group-label {
   display: none;
 }
 
 .sidebar.collapsed .nav-item {
   justify-content: center;
-  padding: 10px;
+  padding: 12px;
+  min-height: 44px;
+}
+
+.sidebar.collapsed .nav-item > span:not(.nav-icon) {
+  display: none;
 }
 
 .sidebar.collapsed .nav-icon {
   margin: 0;
+  font-size: 20px;
 }
 
 .sidebar.collapsed .nav-label-flex,
-.sidebar.collapsed .nav-group-label,
-.sidebar.collapsed .sidebar-group-label {
+.sidebar.collapsed .nav-group-label {
+  display: none;
+}
+
+.sidebar.collapsed .nav-item.sub-item {
   display: none;
 }
 
@@ -420,10 +464,12 @@
 
 .sidebar.collapsed .nav-group-wrapper:hover > .sub-menu {
   display: flex;
+  flex-direction: column;
 }
 
 .sidebar.collapsed .sidebar-footer {
   padding-top: 12px;
+  gap: 12px;
 }
 
 .sidebar.collapsed .user-profile {
@@ -432,6 +478,10 @@
 }
 
 .sidebar.collapsed .user-details {
+  display: none;
+}
+
+.sidebar.collapsed .user-profile > button {
   display: none;
 }
 
@@ -444,9 +494,16 @@
   display: none;
 }
 
-/* Hidden Sidebar Styles */
-.sidebar.hidden {
-  transform: translateX(-100%);
-  opacity: 0;
-  pointer-events: none;
+.sidebar.collapsed .switch {
+  width: 32px;
+  height: 18px;
+}
+
+.sidebar.collapsed .switch-slider::before {
+  width: 14px;
+  height: 14px;
+}
+
+.sidebar.collapsed .switch input:checked+.switch-slider::before {
+  transform: translateX(14px);
 }

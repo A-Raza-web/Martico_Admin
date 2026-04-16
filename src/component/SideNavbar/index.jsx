@@ -4,6 +4,7 @@ import Button from '@mui/material/Button'
 import { useTheme } from '../../context/ThemeContext'
 import './sideNav.css'
 import logo from '../../assets/logo.png'
+import logo2 from '../../assets/logo2.svg'
 import DashboardIcon from '@mui/icons-material/DashboardOutlined'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined'
 import InventoryIcon from '@mui/icons-material/Inventory2Outlined'
@@ -21,8 +22,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import LogoutIcon from '@mui/icons-material/Logout'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', group: 'General', path: '/', icon: <DashboardIcon sx={{ fontSize: 20 }} /> },
@@ -101,7 +100,7 @@ const navItems = [
   { id: 'marketing', label: 'Marketing', group: 'Analytics', path: '/marketing', icon: <CampaignIcon sx={{ fontSize: 20 }} /> },
 ]
 
-function SideNavbar({ sidebarOpen, setSidebarOpen }) {
+function SideNavbar({ sidebarOpen, setSidebarOpen, sidebarHovering, setSidebarHovering }) {
   const { theme, toggleTheme } = useTheme()
   const location = useLocation()
   const navigate = useNavigate()
@@ -204,38 +203,17 @@ function SideNavbar({ sidebarOpen, setSidebarOpen }) {
   }
 
   return (
-    <>
-      {/* Floating Toggle Button - shifts position based on sidebar state */}
-      <Button
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        sx={{
-          position: 'fixed',
-          left: sidebarOpen ? 'auto' : '20px',
-          right: sidebarOpen ? '20px' : 'auto',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          minWidth: 0,
-          width: 36,
-          height: 36,
-          borderRadius: '50%',
-          bgcolor: 'var(--bg-card)',
-          color: 'var(--text-primary)',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-          border: '1px solid var(--border-color)',
-          transition: 'all 0.3s ease',
-          zIndex: 1200,
-          '&:hover': {
-            bgcolor: 'var(--primary-color)',
-            color: 'white',
-          }
-        }}
-      >
-        {sidebarOpen ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-      </Button>
-
-      <aside className={`sidebar ${sidebarOpen ? '' : 'hidden'}`}>
+    <aside
+      className={`sidebar ${!sidebarOpen && !sidebarHovering ? 'collapsed' : ''}`}
+      onMouseEnter={() => setSidebarHovering(true)}
+      onMouseLeave={() => setSidebarHovering(false)}
+    >
       <div className="sidebar-header">
-        <img src={logo} alt="Martico Logo" className="logo-full" />
+        <img
+          src={!sidebarOpen && !sidebarHovering ? logo2 : logo}
+          alt="Martico Logo"
+          className="logo-full"
+        />
       </div>
 
       <nav className="sidebar-nav">
@@ -334,7 +312,6 @@ function SideNavbar({ sidebarOpen, setSidebarOpen }) {
         </div>
       </div>
     </aside>
-    </>
   )
 }
 
