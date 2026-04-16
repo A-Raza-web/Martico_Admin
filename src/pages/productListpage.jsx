@@ -4,7 +4,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import { AiFillStar } from 'react-icons/ai';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';

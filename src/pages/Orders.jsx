@@ -64,7 +64,7 @@ const Orders = () => {
       if (searchQuery) params.append('q', searchQuery);
 
       const token = getAdminToken();
-      const res = await fetch(`${API_BASE}/orders/admin/orders?${params.toString()}`, {
+      const res = await fetch(`${API_BASE}/orders?${params.toString()}`, {
         headers: {
           ...(token && { Authorization: `Bearer ${token}` }),
         },
@@ -107,13 +107,7 @@ const Orders = () => {
           <div className="card-subtitle">Manage customer orders</div>
         </div>
         <div className="table-actions" style={{ display: 'flex', gap: '10px' }}>
-          <TextField
-            size="small"
-            placeholder="Search orders..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            sx={{ width: 200 }}
-          />
+          
           <FormControl size="small" sx={{ minWidth: 140 }}>
             <InputLabel>Status</InputLabel>
             <Select
@@ -121,7 +115,7 @@ const Orders = () => {
               label="Status"
               onChange={(e) => setStatusFilter(e.target.value)}
             >
-              <MenuItem value="">All</MenuItem>
+             <MenuItem value="">All</MenuItem>
               <MenuItem value="pending">Pending</MenuItem>
               <MenuItem value="confirmed">Confirmed</MenuItem>
               <MenuItem value="shipped">Shipped</MenuItem>
@@ -129,9 +123,7 @@ const Orders = () => {
               <MenuItem value="cancelled">Cancelled</MenuItem>
             </Select>
           </FormControl>
-          <Button size="small" variant="outlined" color="inherit" onClick={fetchOrders}>
-            Refresh
-          </Button>
+        
         </div>
       </div>
 

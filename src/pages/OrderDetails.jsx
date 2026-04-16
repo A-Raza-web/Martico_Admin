@@ -63,7 +63,7 @@ const OrderDetails = () => {
       setLoading(true);
       const token = getAdminToken();
       
-      const res = await fetch(`${API_BASE}/orders/admin/orders/${id}`, {
+      const res = await fetch(`${API_BASE}/orders/${id}`, {
         headers: {
           'Content-Type': 'application/json',
           ...(token && { Authorization: `Bearer ${token}` }),
@@ -125,6 +125,10 @@ const OrderDetails = () => {
       setUpdating(false);
     }
   };
+ 
+  const truncateToFourWords = (text) => {
+    return text.split(" ").slice(0, 4).join(" ");
+   };
 
   if (loading) {
     return (
@@ -164,7 +168,7 @@ const OrderDetails = () => {
             </div>
             {(order.items || []).map((item, idx) => (
               <div key={idx} className="table-row" style={{ gridTemplateColumns: '3fr 1fr 1fr 1fr' }}>
-                <span>{item.name || 'Product'}</span>
+                <span>{truncateToFourWords(item.name || 'Product')}</span>
                 <span>${(item.price || 0).toFixed(2)}</span>
                 <span>{item.quantity || 1}</span>
                 <span>${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
