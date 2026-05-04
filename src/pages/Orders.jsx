@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
@@ -7,8 +7,9 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import CircularProgress from '@mui/material/CircularProgress';
-
+import Pagination from '@mui/material/Pagination';
 const API_BASE = import.meta.env.VITE_API_URL || 'https://martico-server.vercel.app/api';
+
 const getAdminToken = () =>
   localStorage.getItem('adminToken') ||
   localStorage.getItem('token') ||
@@ -21,14 +22,13 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
 
-const formatCurrency = (amount) => {
-  return `$${Number(amount || 0).toFixed(2)}`;
-};
+const formatCurrency = (amount) => `$${Number(amount || 0).toFixed(2)}`;
 
 const getStatusClass = (status) => {
-  if (status === 'paid' || status === 'delivered' || status === 'confirmed') return 'status-success';
-  if (status === 'pending' || status === 'processing') return 'status-pending';
-  if (status === 'cancelled' || status === 'refunded' || status === 'failed') return 'status-failed';
+  const s = status?.toLowerCase();
+  if (['paid', 'delivered', 'confirmed'].includes(s)) return 'status-success';
+  if (['pending', 'processing'].includes(s)) return 'status-pending';
+  if (['cancelled', 'refunded', 'failed'].includes(s)) return 'status-failed';
   return 'status-pending';
 };
 
@@ -52,6 +52,10 @@ const Orders = () => {
   const [error, setError] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  
   const navigate = useNavigate();
 
   const fetchOrders = async () => {
@@ -62,60 +66,63 @@ const Orders = () => {
       const params = new URLSearchParams();
       if (statusFilter) params.append('status', statusFilter);
       if (searchQuery) params.append('q', searchQuery);
-
+      params.append('page', page);
+      params.append('limit', 10);
       const token = getAdminToken();
-      const res = await fetch(`${API_BASE}/orders?${params.toString()}`, {
+      const res = await fetch(`${API_BASE}/admin/orders?${params.toString()}`, {
         headers: {
-          ...(token && { Authorization: `Bearer ${token}` }),
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
       });
 
-      if (res.ok) {
-        const json = await res.json();
-        if (json.success && json.data) {
-          setOrders(json.data);
-        } else {
-          setError('Failed to fetch orders');
-        }
+      const json = await res.json();
+      if (res.ok && json.success) {
+        setOrders(json.data);
+        setTotalPages(json.pagination?.pages || 1);
       } else {
-        setError('Failed to fetch orders');
+        setError(json.message || 'Failed to fetch orders');
       }
     } catch (err) {
       console.error('Error fetching orders:', err);
-      setError('Failed to fetch orders');
+      setError('Connection error. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  useEffect(() => {
     const debounce = setTimeout(() => {
       fetchOrders();
-    }, 300);
+    }, 400);
     return () => clearTimeout(debounce);
-  }, [statusFilter, searchQuery]);
+  }, [statusFilter, searchQuery, page]);
 
   return (
     <div className="card table-card">
-      <div className="card-header">
+      <div className="card-header" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '15px' }}>
         <div>
-          <div className="card-title">Orders</div>
-          <div className="card-subtitle">Manage customer orders</div>
+          <div className="card-title">Orders Management</div>
+          <div className="card-subtitle">Viewing all customer transactions</div>
         </div>
-        <div className="table-actions" style={{ display: 'flex', gap: '10px' }}>
+        
+        <div className="table-actions" style={{ display: 'flex', gap: '10px', width: '100%', flexWrap: 'wrap' }}>
+          <TextField
+            size="small"
+            placeholder="Search by Order#, Email..."
+            value={searchQuery}
+            onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
+            sx={{ minWidth: 250, flexGrow: 1 }}
+          />
           
-          <FormControl size="small" sx={{ minWidth: 140 }}>
-            <InputLabel>Status</InputLabel>
+          <FormControl size="small" sx={{ minWidth: 160 }}>
+            <InputLabel>Status Filter</InputLabel>
             <Select
               value={statusFilter}
-              label="Status"
-              onChange={(e) => setStatusFilter(e.target.value)}
+              label="Status Filter"
+              onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
             >
-             <MenuItem value="">All</MenuItem>
+              <MenuItem value="">All Statuses</MenuItem>
               <MenuItem value="pending">Pending</MenuItem>
               <MenuItem value="confirmed">Confirmed</MenuItem>
               <MenuItem value="shipped">Shipped</MenuItem>
@@ -123,51 +130,67 @@ const Orders = () => {
               <MenuItem value="cancelled">Cancelled</MenuItem>
             </Select>
           </FormControl>
-        
         </div>
       </div>
 
       {loading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
-          <CircularProgress />
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '60px' }}>
+          <CircularProgress size={30} />
         </div>
       ) : error ? (
-        <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
-          {error}
-          <Button onClick={fetchOrders} sx={{ ml: 2 }}>Retry</Button>
-        </div>
-      ) : orders.length === 0 ? (
-        <div style={{ padding: '40px', textAlign: 'center' }}>
-          No orders found
+        <div style={{ padding: '40px', textAlign: 'center', color: '#d32f2f' }}>
+          <p>{error}</p>
+          <Button variant="outlined" onClick={fetchOrders}>Try Again</Button>
         </div>
       ) : (
-        <div className="table">
-          <div className="table-header" style={{ gridTemplateColumns: '1fr 2fr 1fr 1fr 1fr 1fr' }}>
-            <span>Order ID</span>
-            <span>Customer</span>
-            <span>Date</span>
-            <span>Items</span>
-            <span>Amount</span>
-            <span>Status</span>
-          </div>
-          {orders.map((order) => (
-            <div
-              key={order._id}
-              className="table-row"
-              style={{ gridTemplateColumns: '1fr 2fr 1fr 1fr 1fr 1fr', cursor: 'pointer' }}
-              onClick={() => navigate(`/orders/${order._id}`)}
-            >
-              <span style={{ fontWeight: 500 }}>{order.orderNumber || order._id}</span>
-              <span>{order.contact?.email || order.shippingAddress?.fullName || '-'}</span>
-              <span>{formatDate(order.createdAt)}</span>
-              <span>{order.items?.length || 0} items</span>
-              <span>{formatCurrency(order.totalAmount)}</span>
-              <span className={`status ${getStatusClass(order.fulfillmentStatus)}`}>
-                {getStatusLabel(order.fulfillmentStatus)}
-              </span>
+        <>
+          <div className="table-container" style={{ overflowX: 'auto' }}>
+            <div className="table">
+              <div className="table-header" style={{ gridTemplateColumns: '1.2fr 2fr 1fr 0.8fr 1fr 1fr' }}>
+                <span>Order ID</span>
+                <span>Customer Info</span>
+                <span>Date</span>
+                <span>Items</span>
+                <span>Total</span>
+                <span>Status</span>
+              </div>
+              {orders.length === 0 ? (
+                <div style={{ padding: '40px', textAlign: 'center' }}>No matches found.</div>
+              ) : (
+                orders.map((order) => (
+                  <div
+                    key={order._id}
+                    className="table-row"
+                    style={{ gridTemplateColumns: '1.2fr 2fr 1fr 0.8fr 1fr 1fr', cursor: 'pointer' }}
+                    onClick={() => navigate(`/orders/${order._id}`)}
+                  >
+                    <span style={{ fontWeight: 600, color: '#1976d2' }}>{order.orderNumber || 'N/A'}</span>
+                    <span style={{ fontSize: '0.9rem' }}>
+                        {order.contact?.email || order.shippingAddress?.fullName}
+                    </span>
+                    <span>{formatDate(order.createdAt)}</span>
+                    <span>{order.items?.length || 0}</span>
+                    <span style={{ fontWeight: 600 }}>{formatCurrency(order.totalAmount)}</span>
+                    <span className={`status ${getStatusClass(order.fulfillmentStatus)}`}>
+                      {getStatusLabel(order.fulfillmentStatus)}
+                    </span>
+                  </div>
+                ))
+              )}
             </div>
-          ))}
-        </div>
+          </div>
+
+          {totalPages > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+              <Pagination 
+                count={totalPages} 
+                page={page} 
+                onChange={(e, value) => setPage(value)} 
+                color="primary" 
+              />
+            </div>
+          )}
+        </>
       )}
     </div>
   );
