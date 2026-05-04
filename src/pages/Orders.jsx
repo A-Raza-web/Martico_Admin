@@ -8,7 +8,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import CircularProgress from '@mui/material/CircularProgress';
 import Pagination from '@mui/material/Pagination';
-const API_BASE = import.meta.env.VITE_API_URL || 'https://martico-server.vercel.app/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://martico-server.vercel.app/api/orders';
 
 const getAdminToken = () =>
   localStorage.getItem('adminToken') ||
