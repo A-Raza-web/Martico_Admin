@@ -23,6 +23,7 @@
   border-radius: 4px;
 }
 .table-row {
+  width:99%;
   display: grid;
   grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
   gap: 8px;
