@@ -10,18 +10,18 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Pagination from '@mui/material/Pagination';
 const API_BASE = import.meta.env.VITE_API_URL || 'https://martico-server.vercel.app/api/orders';
 
-const getAdminToken = () =>
-  localStorage.getItem('adminToken') ||
-  localStorage.getItem('token') ||
-  sessionStorage.getItem('adminToken') ||
-  sessionStorage.getItem('token');
+const getAdminToken = () => {
+  return localStorage.getItem('adminToken') || 
+         localStorage.getItem('token') || 
+         sessionStorage.getItem('adminToken') || 
+         sessionStorage.getItem('token');
+};
 
 const formatDate = (dateString) => {
   if (!dateString) return '-';
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
-
 
 const formatCurrency = (amount) => `$${Number(amount || 0).toFixed(2)}`;
 
@@ -32,7 +32,6 @@ const getStatusClass = (status) => {
   if (['cancelled', 'refunded', 'failed'].includes(s)) return 'status-failed';
   return 'status-pending';
 };
-
 const getStatusLabel = (status) => {
   const labels = {
     pending: 'Pending',
