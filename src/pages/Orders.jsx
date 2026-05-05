@@ -69,6 +69,7 @@ const Orders = () => {
       params.append('page', page);
       params.append('limit', 10);
       const token = getAdminToken();
+      console.log("Sending Token:", token);
       const res = await fetch(`${API_BASE}/admin/orders?${params.toString()}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
