@@ -7,6 +7,8 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import TextField from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://martico-server.vercel.app/api';
 const getAdminToken = () =>
@@ -57,6 +59,7 @@ const OrderDetails = () => {
   const [fulfillmentStatus, setFulfillmentStatus] = useState('');
   const [trackingNumber, setTrackingNumber] = useState('');
   const [adminNotes, setAdminNotes] = useState('');
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   const fetchOrder = async () => {
     try {
@@ -114,13 +117,13 @@ const OrderDetails = () => {
       if (res.ok) {
         const json = await res.json();
         setOrder(json.data);
-        alert('Order updated successfully!');
+        setSnackbar({ open: true, message: 'Order updated successfully!', severity: 'success' });
       } else {
-        alert('Failed to update order');
+        setSnackbar({ open: true, message: 'Failed to update order', severity: 'error' });
       }
     } catch (err) {
       console.error('Error updating order:', err);
-      alert('Failed to update order');
+      setSnackbar({ open: true, message: 'Failed to update order', severity: 'error' });
     } finally {
       setUpdating(false);
     }
@@ -282,6 +285,17 @@ const OrderDetails = () => {
           </div>
         </div>
       </div>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setSnackbar({ ...snackbar, open: false })} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

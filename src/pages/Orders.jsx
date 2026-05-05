@@ -106,16 +106,16 @@ const Orders = () => {
           <div className="card-subtitle">Viewing all customer transactions</div>
         </div>
         
-        <div className="table-actions" style={{ display: 'flex', gap: '10px', width: '100%', flexWrap: 'wrap' }}>
+        <div className="table-actions" style={{ display: 'flex', gap: '10px', width: '100%' }}>
           <TextField
             size="small"
             placeholder="Search by Order#, Email..."
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
-            sx={{ minWidth: 250, flexGrow: 1 }}
+            sx={{ flex: 1 }}
           />
-          
-          <FormControl size="small" sx={{ minWidth: 160 }}>
+
+          <FormControl size="small" sx={{ flex: 1 }}>
             <InputLabel>Status Filter</InputLabel>
             <Select
               value={statusFilter}
