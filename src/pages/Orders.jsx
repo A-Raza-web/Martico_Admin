@@ -22,6 +22,10 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
 
+const getAdminToken = () => {
+    return localStorage.getItem('adminToken') || localStorage.getItem('token');
+};
+
 const formatCurrency = (amount) => `$${Number(amount || 0).toFixed(2)}`;
 
 const getStatusClass = (status) => {
