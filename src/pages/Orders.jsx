@@ -8,7 +8,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import CircularProgress from '@mui/material/CircularProgress';
 import Pagination from '@mui/material/Pagination';
-const API_BASE = import.meta.env.VITE_API_URL || 'https://martico-server.vercel.app/api/orders';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://martico-server.vercel.app/api';
 
 const getAdminToken = () => {
   return localStorage.getItem('adminToken') || 
@@ -70,7 +70,7 @@ const Orders = () => {
       params.append('limit', 10);
       const token = getAdminToken();
       console.log("Sending Token:", token);
-      const res = await fetch(`${API_BASE}/admin/orders?${params.toString()}`, {
+      const res = await fetch(`${API_BASE}/orders/admin/orders?${params.toString()}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
