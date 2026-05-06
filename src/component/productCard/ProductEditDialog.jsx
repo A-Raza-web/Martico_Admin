@@ -178,76 +178,59 @@ function ProductEditDialog({ open, onClose, product, onUpdate }) {
     return newErrors;
   };
 
-  const handleSubmit = async () => {
-    const newErrors = validateForm();
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
+const handleSubmit = async () => {
+  const validationErrors = validateForm();
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    return;
+  }
+
+  setLoading(true);
+  
+  try {
+    const token = localStorage.getItem('token');
+
+    const payload = {
+      name: editFormData.name,
+      description: editFormData.description,
+      brand: editFormData.brand,
+      category: editFormData.category,
+      price: Number(editFormData.price),
+      oldPrice: Number(editFormData.oldPrice),
+      discount: Number(editFormData.discount),
+      countInStock: Number(editFormData.countInStock),
+      subCategory: editFormData.subCategory || null, 
+      rating: Number(editFormData.rating),
+      inFeatured: editFormData.inFeatured,
+      images: editFormData.images 
+    };
+
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    };
+
+    const response = await axios.put(
+      `https://martico-server.vercel.app/api/products/${product.id || product._id}`,
+      payload,
+      config
+    );
+
+    if (response.data.success) {
+      if (onUpdate) onUpdate(response.data.data);
+      onClose();
     }
-
-    setLoading(true);
-    setErrors({}); // Clear previous errors
-    
-    try {
-      // Convert images to base64 if new images were added
-      let base64Images = [];
-      
-      if (imageFiles.length > 0) {
-        base64Images = await Promise.all(
-          imageFiles.map(file => {
-            return new Promise((resolve, reject) => {
-              const reader = new FileReader();
-              reader.readAsDataURL(file);
-              reader.onload = () => resolve(reader.result);
-              reader.onerror = error => reject(error);
-            });
-          })
-        );
-      }
-
-      // Prepare the update payload
-      const payload = {
-        name: editFormData.name,
-        description: editFormData.description,
-        brand: editFormData.brand,
-        category: editFormData.category,
-        price: parseFloat(editFormData.price),
-        countInStock: parseInt(editFormData.countInStock) || 0,
-        subCategory: editFormData.subCategory || null,
-        rating: parseFloat(editFormData.rating) || 0,
-        inFeatured: editFormData.inFeatured,
-        review: [] // Initialize empty review array
-      };
-
-      // Add images if new ones were uploaded
-      if (base64Images.length > 0) {
-        payload.images = base64Images;
-      }
-
-      // Make API call to update product
-      const response = await axios.put(
-        `http://localhost:4000/api/products/${product.id || product._id}`,
-        payload
-      );
-
-      if (response.data.success) {
-        // Call onUpdate callback to refresh the product list
-        if (onUpdate) {
-          onUpdate(response.data.data);
-        }
-        onClose();
-      }
-    } catch (error) {
-      console.error("Error updating product:", error);
-      // Show error message to user
-      setErrors({
-        submit: error.response?.data?.message || "Failed to update product. Please try again."
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  } catch (error) {
+    console.error("Error updating product:", error);
+    setErrors({
+      submit: error.response?.data?.message || "Failed to update product. Please try again."
+    });
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <Dialog
       open={open}
