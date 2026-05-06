@@ -15,18 +15,30 @@ function ProductDeleteDialog({ open, onClose, onConfirm, productName, productId 
         setError('');
         
         try {
-            const response = await axios.delete(`https://martico-server.vercel.app/api/products/${productId}`);
+            const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+
+            const response = await axios.delete(
+                `https://martico-server.vercel.app/api/products/${productId}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}` 
+                    }
+                }
+            );
             
             if (response.data.success) {
-                // Call onConfirm callback to handle success
                 if (onConfirm) {
                     onConfirm();
                 }
-                onClose(); // Close the dialog
+                onClose(); 
             }
         } catch (error) {
             console.error('Error deleting product:', error);
-            setError(error.response?.data?.message || 'Failed to delete product. Please try again.');
+            if (error.response?.status === 401) {
+                setError('Your session has expired. Please log in again.');
+            } else {
+                setError(error.response?.data?.message || 'Failed to delete product.');
+            }
         } finally {
             setLoading(false);
         }
