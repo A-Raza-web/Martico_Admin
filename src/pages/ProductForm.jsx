@@ -82,56 +82,78 @@ const ProductForm = () => {
         setSnackbar(prev => ({ ...prev, open: false }));
     };
 
-    const handleSubmit = async (formData, imageFiles) => {
+ const handleSubmit = async (formData, imageFiles) => {
     setProgress(20);
-    setLoading(true)
+    setLoading(true);
     try {
         setProgress(40);
-        // 1️⃣ Convert images to base64
+        
+        // 1. Helper function to convert image files to base64 strings
         const convertToBase64 = (file) => {
             return new Promise((resolve, reject) => {
-                const reader = new FileReader()
-                reader.readAsDataURL(file)
-                reader.onload = () => resolve(reader.result)
-                reader.onerror = error => reject(error)
-            })
-        }
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        };
 
-        let base64Images = []
-
+        let base64Images = [];
         if (imageFiles && imageFiles.length > 0) {
+            // Process all selected image files concurrently
             base64Images = await Promise.all(
                 imageFiles.map(file => convertToBase64(file))
-            )
+            );
         }
+        
         setProgress(60);
-        // 2️⃣ Prepare JSON body
+
+        // 2. Prepare the final JSON request body
         const payload = {
             ...formData,
             images: base64Images
-        }
+        };
 
+        // 3. Retrieve authentication token and set up request headers
+        const token = localStorage.getItem('token'); 
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        };
+
+        // Determine API endpoint based on operation (Edit vs Create)
         const url = isEdit
             ? `https://martico-server.vercel.app/api/products/${id}`
-            : `https://martico-server.vercel.app/api/products/create`
+            : `https://martico-server.vercel.app/api/products/create`;
 
-        const method = isEdit ? 'put' : 'post'
+        const method = isEdit ? 'put' : 'post';
 
-        const res = await axios[method](url, payload)
+        // 4. Execute the API request with headers and payload
+        const res = await axios[method](url, payload, config);
+
         setProgress(90);
         if (res.data.success) {
             const message = isEdit ? 'Product updated successfully!' : 'Product created successfully!';
+            // Redirect to product list with success notification
             navigate(`/products/list?success=${encodeURIComponent(message)}`);
         }
         setProgress(100);
     } catch (error) {
-        console.error('Error saving product:', error)
-        showSnackbar(error.response?.data?.message || 'Error saving product', 'error');
+        console.error('Error saving product:', error);
+        
+        // Handle unauthorized access (401) or other server errors
+        const errMsg = error.response?.status === 401 
+            ? "Your session has expired. Please login again." 
+            : (error.response?.data?.message || 'Error saving product');
+            
+        showSnackbar(errMsg, 'error');
         setProgress(100);
     } finally {
-        setLoading(false)
+        setLoading(false);
     }
-}
+};
 
 
     return (
