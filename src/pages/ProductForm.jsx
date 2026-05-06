@@ -82,13 +82,13 @@ const ProductForm = () => {
         setSnackbar(prev => ({ ...prev, open: false }));
     };
 
- const handleSubmit = async (formData, imageFiles) => {
+const handleSubmit = async (formData, imageFiles) => {
     setProgress(20);
     setLoading(true);
     try {
         setProgress(40);
         
-        // 1. Helper function to convert image files to base64 strings
+        // 1. Convert selected image files to base64 for JSON transmission
         const convertToBase64 = (file) => {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -100,7 +100,6 @@ const ProductForm = () => {
 
         let base64Images = [];
         if (imageFiles && imageFiles.length > 0) {
-            // Process all selected image files concurrently
             base64Images = await Promise.all(
                 imageFiles.map(file => convertToBase64(file))
             );
@@ -108,14 +107,22 @@ const ProductForm = () => {
         
         setProgress(60);
 
-        // 2. Prepare the final JSON request body
+        // 2. Build the payload including the images
         const payload = {
             ...formData,
             images: base64Images
         };
 
-        // 3. Retrieve authentication token and set up request headers
+        // 3. Setup Authorization Token (This fixes the 401 Error)
         const token = localStorage.getItem('token'); 
+        
+        // Validation: If no token exists, don't even try the request
+        if (!token) {
+            showSnackbar("Authentication failed: No token found. Please login again.", "error");
+            setLoading(false);
+            return;
+        }
+
         const config = {
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -123,29 +130,27 @@ const ProductForm = () => {
             }
         };
 
-        // Determine API endpoint based on operation (Edit vs Create)
         const url = isEdit
             ? `https://martico-server.vercel.app/api/products/${id}`
             : `https://martico-server.vercel.app/api/products/create`;
 
         const method = isEdit ? 'put' : 'post';
 
-        // 4. Execute the API request with headers and payload
+        // 4. Send request with the configuration (token included)
         const res = await axios[method](url, payload, config);
 
         setProgress(90);
         if (res.data.success) {
             const message = isEdit ? 'Product updated successfully!' : 'Product created successfully!';
-            // Redirect to product list with success notification
             navigate(`/products/list?success=${encodeURIComponent(message)}`);
         }
         setProgress(100);
     } catch (error) {
         console.error('Error saving product:', error);
         
-        // Handle unauthorized access (401) or other server errors
+        // Handle specific 401 error message
         const errMsg = error.response?.status === 401 
-            ? "Your session has expired. Please login again." 
+            ? "Your session has expired or you don't have admin rights. Please login again." 
             : (error.response?.data?.message || 'Error saving product');
             
         showSnackbar(errMsg, 'error');
