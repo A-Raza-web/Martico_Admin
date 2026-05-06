@@ -21,7 +21,7 @@ const Customers = () => {
             setLoading(true);
             const token = getAdminToken();
             
-            const res = await fetch(`${API_BASE}/users/admin/customers?q=${searchQuery}`, {
+            const res = await fetch(`${API_BASE}/auth/admin/customers?q=${searchQuery}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
